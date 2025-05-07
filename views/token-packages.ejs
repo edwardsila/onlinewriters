@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Word Coins - Onlinejobs Marketplace</title>
+    <link rel="stylesheet" href="/styles/default.css">
+    <link rel="stylesheet" href="/styles/token.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+    <nav>
+        <div id="nav-brand">
+            <div onclick="location.href='/'">
+                <img src="/logo.svg" alt="" id="logo-image">
+            </div>
+        </div>
+    </nav>
+
+    <section class="token-packages">
+        <h1>Purchase Word Coins</h1>
+        <p class="token-info">Word Coins (WC) are used to apply for jobs. Each job application requires at least 1 Word Coin.</p>
+
+        <div class="token-balance">
+            <h3>Your Current Balance</h3>
+            <div class="balance"><%= user.tokens %> WC</div>
+        </div>
+
+        <div class="packages-container">
+            <div class="package" onclick="selectPackage('starter')">
+                <h3>STARTER</h3>
+                <div class="token-amount">7 WC</div>
+                <div class="price">KSh 750</div>
+                <div class="package-details">
+                    <ul>
+                        <li>Apply for 7 jobs</li>
+                        <li>No expiration</li>
+                    </ul>
+                </div>
+                <button class="select-package" data-package="starter">Select</button>
+            </div>
+
+            <div class="package" onclick="selectPackage('most_popular')">
+                <h3>MOST POPULAR</h3>
+                <div class="token-amount">15 WC</div>
+                <div class="price">KSh 1250</div>
+                <div class="package-details">
+                    <ul>
+                        <li>Apply for 15 jobs</li>
+                        <li>16% discount</li>
+                        <li>No expiration</li>
+                    </ul>
+                </div>
+                <button class="select-package" data-package="most_popular">Select</button>
+            </div>
+
+            <div class="package" onclick="selectPackage('freelancer_active')">
+                <h3>FREELANCER ACTIVE</h3>
+                <div class="token-amount">30 WC</div>
+                <div class="price">KSh 2000</div>
+                <div class="package-details">
+                    <ul>
+                        <li>Apply for 30 jobs</li>
+                        <li>25% discount</li>
+                        <li>No expiration</li>
+                    </ul>
+                </div>
+                <button class="select-package" data-package="freelancer_active">Select</button>
+            </div>
+        </div>
+
+        <form id="purchase-form" action="/token/purchase" method="post">
+            <input type="hidden" name="packageId" id="packageId" value="">
+        </form>
+
+    </section>
+
+    <br>
+    <div class="dashboard-button-wrapper">
+        <a href="/dashboard" class="dashboard-btn">
+            <i class="fa-solid fa-tachometer-alt"></i> Back
+        </a>
+    </div>
+ 
+    <footer>
+        <small>Onlinejobs Marketplace &copy; <span class="year"></span></small>
+    </footer>
+
+    <script>
+        document.querySelector('.year').innerHTML = new Date().getFullYear();
+
+        function selectPackage(packageId) {
+            document.getElementById('packageId').value = packageId;
+            document.getElementById('purchase-form').submit();
+        }
+
+        // Add click event listeners to package buttons
+        document.querySelectorAll('.select-package').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectPackage(e.target.dataset.package);
+            });
+        });
+    </script>
+</body>
+</html>

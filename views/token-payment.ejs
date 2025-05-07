@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Coins Payment - Onlinejobs Marketplace</title>
+    <link rel="stylesheet" href="/styles/default.css">
+    <link rel="stylesheet" href="/styles/payment.css">
+    <link rel="stylesheet" href="/styles/token.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+    <nav>
+        <div class="company-logo">
+            <img src="/logo.svg" alt="" onclick="location.href='/'">
+            <h2>Purchase Word Coins</h2>
+        </div>
+    </nav>
+
+    <section>
+        <div class="token-payment-summary">
+            <h2>Payment Summary</h2>
+            <div class="package-details">
+                <div class="detail">
+                    <span class="label">Package:</span>
+                    <span class="value"><%= package.packageId.charAt(0).toUpperCase() + package.packageId.slice(1) %> Package</span>
+                </div>
+                <div class="detail">
+                    <span class="label">Word Coins:</span>
+                    <span class="value"><%= package.tokens %> WC</span>
+                </div>
+                <div class="detail">
+                    <span class="label">Amount:</span>
+                    <span class="value">KSh <%= package.price %> <% if(offer){ %> (20% offer applied) <% } %></span>
+                </div>
+                <div class="detail">
+                    <span class="label">Reference:</span>
+                    <span class="value"><%= package.reference %></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="make-pay">
+            <form action="#" class="payment-acc">
+                <fieldset>
+                    <legend>
+                        <h1 class="make-mpesa">Make M-Pesa Payment</h1>
+                    </legend>
+                    <h4><i class="fa-solid fa-user"></i> <span class="account-username"><%= user.name %></span></h4>
+                    <p><i class="fa-solid fa-envelope"></i> <span class="user-email"><%= user.email %></span></p>
+                    <label for="tel">M-Pesa Number:
+                        <input type="tel" name="phone" id="phone" placeholder="Enter Phone Number to make payment." value="<%= user.phone %>" required>
+                    </label>
+                    <input type="submit" value="Make M-Pesa Payment" class="submit-payment">
+                </fieldset>
+                <div><i class="fa-solid fa-circle-info"></i> The amount to pay is KSh. <%= package.price %></div>
+                <p>Not ready to complete your payment now?</p>
+                <p>Continue to <a href="/token">Word Coins packages</a> or <a href="/jobs">browse jobs</a></p>
+            </form>
+        </div>
+    </section>
+
+    <section class="hidden">
+        <div class="complete-payment">
+            <h1>If you have completed the payment.</h1>
+            <button class="pay-complete">Click Here</button>
+        </div>
+    </section>
+
+    <div id="accountId" style="display: none;"><%= user._id %></div>
+    <div id="accessKey" style="display: none;"><%= user.accessKey %></div>
+    <div id="packageId" style="display: none;"><%= package.packageId %></div>
+    <div id="tokenAmount" style="display: none;"><%= package.tokens %></div>
+    <div id="reference" style="display: none;"><%= package.reference %></div>
+    <script>
+        const confirmSection = document.querySelector('section.hidden');
+        const confirmBtn = document.querySelector('.pay-complete');
+      
+        // Submit payment details
+        document.forms[0].addEventListener('submit', async (e) => {
+          e.preventDefault();
+      
+          const form = document.forms[0];
+          const phone = form.phone.value;
+          const amount = "<%= package.price %>";
+          const reference = document.getElementById('reference').innerText;
+          const description = "Word Coins purchase: " + document.getElementById('packageId').innerText + " package";
+          const tokens = document.getElementById('tokenAmount').innerText;
+      
+          try {
+            const res = await fetch('/stk', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ phone, amount, reference, description, tokens })
+            });
+      
+            const data = await res.json();
+      
+            if (data.CustomerMessage === 'Success. Request accepted for processing') {
+              alert('STK push sent. Check your phone and enter your M-Pesa PIN.');
+              // Unhide the confirmation section
+              confirmSection.classList.remove('hidden');
+            } else {
+              alert('Payment initiation failed. Try again.');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Error occurred while processing payment.');
+          }
+        });
+      
+        // Confirm payment status when the user clicks the confirmation button
+        confirmBtn.addEventListener('click', async () => {
+          const reference = document.getElementById('reference').innerText;
+          
+          try {
+            const res = await fetch(`/payment-status?reference=${reference}`);
+            const data = await res.json();
+      
+            // Handle different responses
+            if (data.status === 'success') {
+              alert('✅ Payment successful! Word Coins have been added.');
+              window.location.href = '/token';  // Redirect to another page after successful payment
+            } else {
+              alert('❌ Payment not found or not completed. Try again later.');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Something went wrong while checking payment status.');
+          }
+        });
+      </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPESA Payment</title>
+</head>
+<body>
+    <h1>Enter Phone Number and Amount</h1>
+    <form action="/stk" method="POST">
+        <div>
+            <label for="phone">Phone Number (starting with 7 or 1):</label>
+            <input type="text" id="phone" name="phone" required placeholder="e.g. 712345678" />
+        </div>
+        <div>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required placeholder="Amount in KES" />
+        </div>
+        <div>
+            <button type="submit">Proceed with Payment</button>
+        </div>
+    </form>
+</body>
+</html>
